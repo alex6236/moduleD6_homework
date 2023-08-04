@@ -67,7 +67,7 @@ class AddPostForm(forms.ModelForm):
             widget=forms.Select(attrs={
             # 'type': 'text',
             'name': 'category',
-            'placeholder': 'Категория на выбрана',
+            # 'placeholder': 'Категория на выбрана',
             'class': 'form-control me-2',
         }))
 

@@ -7,6 +7,15 @@
  
 {% block content %}
 
+    {% comment %} {% if user.is_authenticated %}
+        {% if category not in user.subscribed_categories.all %}
+            <form action="{% url 'subscribe_category' category.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit">Подписаться</button>
+            </form>
+        {% endif %}
+    {% endif %} {% endcomment %}
+
     <div class="header_top">
         <h5 class="upper">{{ news_detail.title|censor }}</h5>
         {{ news_detail.dataCreation }}
@@ -14,6 +23,8 @@
     <div class="block_text">
         <p class="text_news">{{ news_detail.text|censor }}</p>
     </div>
+
+    {{ postCategory }}
 
     {% comment %} 
     кнопки "удалить и редактировать" видны только авторизованному автору 

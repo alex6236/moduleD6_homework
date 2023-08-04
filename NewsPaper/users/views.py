@@ -2,9 +2,9 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import Group
+# from django.views.generic import TemplateView
+# from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.contrib.auth.models import Group
 from news.models import Author
 
 from django.shortcuts import redirect
@@ -26,5 +26,5 @@ def upgrade_me(request):
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(user)
         Author.objects.create(authorUser=user)
-    return redirect('/users/profile/')
+    return redirect('/')
 

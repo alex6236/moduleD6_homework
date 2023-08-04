@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator
 
-from .models import Post
+from .models import Post, Category
 from django_filters.views import FilterView
 from .filters import PostFilter
 from .forms import DateFilterForm, TitleFilterForm, TtextFilterForm, UsernameFilterForm, AddPostForm
@@ -21,7 +22,6 @@ class NewsList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['time_now'] = datetime.now(timezone.utc)
-        context['form'] = AddPostForm() 
         return context
 # ====================================================    
  
@@ -34,11 +34,22 @@ class AddPost(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     # login_url = '/accounts/login/'
     login_url = '/signup/login_site/'
 
-    def form_valid(self, form):
-        user = self.request.user
-        form.instance.author = self.request.user.author
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['time_now'] = datetime.now(timezone.utc)
+        context['form'] = AddPostForm() 
+        return context
     
+    def form_valid(self, form):
+        # user = self.request.user
+        # form.instance.author = self.request.user.author
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user.author
+        self.object.save()
+        category = form.cleaned_data['category']
+        self.object.postCategory.add(category) 
+        return super().form_valid(form)
+
     
 class PostUpdate(PermissionRequiredMixin, UpdateView):
     model = Post
@@ -46,6 +57,15 @@ class PostUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('news.change_post')
     template_name = 'edit_post.html'
     success_url = '/news/'
+
+    def form_valid(self, form):
+        # user = self.request.user
+        # form.instance.author = self.request.user.author
+        self.object = form.save(commit=False)
+        self.object.save()
+        category = form.cleaned_data['category']
+        self.object.postCategory.add(category)
+        return super().form_valid(form)
 
     
 
@@ -61,6 +81,7 @@ class NewsDetail(DetailView):
     model = Post
     template_name ='news_detail.html'
     context_object_name = 'news_detail'
+
     
 class LoremDetail(DetailView):
     model = Post
@@ -104,4 +125,59 @@ class SearchHeader(FilterView):
             page_number = self.request.GET.get('page')
             context['results'] = paginator.get_page(page_number)
         return context
+    
+# ==================================
+
+class NewsCategoryView(ListView):
+    model = Category
+    template_name = 'categories.html'
+    context_object_name = 'categories'
+    queryset = Category.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat_dist = {
+            'sports': 'Спорт',
+            'politics': 'Политика',
+            'education': 'Образование',
+            'technology': 'Технологии',
+            'lorem': 'Рыба-текст',
+        }
+
+        categories = context['categories']
+        for category in categories:
+            category_name = category.name
+            if category_name in cat_dist:
+                category_name = cat_dist[category_name]
+            # else:
+            #     category_name = category_name
+            return context
+        # category_name = Category.objects.all()
+        # categori_rus_name = [value for key, value in cat_dist.items() if key == 'category_name', 'category_name'=value][0]
+        # context['categori_rus_name'] = categori_rus_name
+        # return context
+
+
+
+def posts_by_category(request, category_name):
+    
+    # translated_category = categories.get(category_name, 'Неизвестная категория')
+    # print(translated_category)
+    # posts = Post.objects.filter(postCategory=translated_category)
+    posts = Post.objects.filter(postCategory__name=category_name)
+    # posts = Post.objects.filter(category__name=category_name)
+    return render(request, 'category.html', {'posts': posts})
+    # return render(request, 'posts.html', {'posts': posts})
+
+# def CategoryDetailView(request, pk):
+#    category = Category.objects.get(name=pk)
+#    is_subscribed = True if len(category.subscribers.filter(id=request.user.id)) else False
+
+#    return render(request,'category.html', 
+#                  {'category': category,  
+#                   'is_subscribed' : is_subscribed, #,
+#                 #   'subscribers': category.subscribers.all()
+#                   'subscribers': category.subscribers.all()
+#                   })
+
     

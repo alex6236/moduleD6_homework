@@ -11,21 +11,26 @@ class Author(models.Model):
     def __str__(self):
         return self.authorUser.username
 
-    def update_rating(self):
-        postRat = self.post_set.all().aggregate(postRating=Sum('rating')) or 0
-        pRat = 0
-        pRat += postRat.get('postRating')
+    # def update_rating(self):
+    #     postRat = self.post_set.all().aggregate(postRating=Sum('rating')) or 0
+    #     pRat = 0
+    #     pRat += postRat.get('postRating')
 
-        commentRat = self.authorUser.comment_set.all(
-        ).aggregate(commentRating=Sum('rating')) or 0
-        cRat = 0
-        cRat += commentRat.get('commentRating')
-        self.ratingAuthor = pRat * 3 + cRat
-        self.save()
+    #     commentRat = self.authorUser.comment_set.all(
+    #     ).aggregate(commentRating=Sum('rating')) or 0
+    #     cRat = 0
+    #     cRat += commentRat.get('commentRating')
+    #     self.ratingAuthor = pRat * 3 + cRat
+    #     self.save()
 
 
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
+    subscribers = models.ManyToManyField(User)
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
@@ -48,6 +53,10 @@ class Post(models.Model):
     text = models.TextField()
     rating = models.SmallIntegerField(default=0)
 
+    class Meta:
+        verbose_name = 'Публикация'
+        verbose_name_plural = 'Публикации'
+
 
     def like(self):
         self.rating += 1
@@ -61,12 +70,17 @@ class Post(models.Model):
         return self.text[:123] + '...'
     
     def __str__(self):
-        return f"Заголовок: {self.title} Дата: {self.dataCreation} Автор: {self.author.authorUser.username}"
+        categories = ', '.join([str(category) for category in self.postCategory.all()])
+        return f"Заголовок: {self.title} |Дата: {self.dataCreation} |Автор: {self.author.authorUser.username} |Категория: {categories}"
+ 
 
 
 class PostCategory(models.Model):
     postThrough = models.ForeignKey(Post, on_delete=models.CASCADE)
     categoryThrough = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.categoryThrough    
 
 
 class Comment(models.Model):

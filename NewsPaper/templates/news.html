@@ -10,6 +10,7 @@
         <h3>
         Лента новостей
         </h3>
+        
         Публикаций на странице: {{news|length}}
     </div>
     {% if news %}
@@ -26,6 +27,7 @@
             {{n.dataCreation|date:'M d Y'}}
         </div>
         <p class="author">Автор: {{ n.author }}</p>
+       
         {% endif %}
 
         <div class="text_news">

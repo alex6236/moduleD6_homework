@@ -77,8 +77,6 @@ class PasswordChangeForm(SignupForm):
             "password2",
             )
         
-    # Так не прокатило, забодал этот allauth на каждую форму надо
-    # очередное извращение, чтобы стилизовать   
         
     # def __init__(self, *args, **kwargs):
     #     super(PasswordChangeForm, self).__init__(*args, **kwargs)
