@@ -1,11 +1,11 @@
-from django import forms
+# from django import forms
 
-from mail.models import Subscriber
+# from mail.models import Subscriber
  
-class SubscriberForm(forms.ModelForm):
-    class Meta:
-        model = Subscriber
-        fields = ['name', 'email']
+# class SubscriberForm(forms.ModelForm):
+#     class Meta:
+#         model = Subscriber
+#         fields = ['user', 'email']
 
         # print(forms)
 

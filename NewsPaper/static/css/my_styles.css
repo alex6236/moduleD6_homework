@@ -222,6 +222,34 @@ a.delete_link:hover {
 
             }
 
+.categry_header {
+    margin: 10px 0;
+    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;    
+    border-radius: 5px;
+    background-color: #1e1e1e;
+}
+
+.category_menu_link {
+    padding: 15px 30px;
+    display: block;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #ffffff; 
+}
+
+.category_menu
+
+.category_menu_link:hover {
+    background-color: #808080;
+    color: #ffffff; 
+}
+
 /* body {
     padding-bottom: 100px;
 } */

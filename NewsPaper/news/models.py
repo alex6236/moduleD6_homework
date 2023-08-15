@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.urls import reverse
 # from django.shortcuts import render
 
 
@@ -31,6 +32,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
+    def get_absolute_url(self):
+        return reverse('category', kwargs={'category_name': self.name})
 
     def __str__(self):
         return self.name

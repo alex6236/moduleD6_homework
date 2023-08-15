@@ -33,6 +33,7 @@ DEBUG = True
 INSTALLED_APPS = [
     'allauth',
     'allauth.account',
+    # =========================
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'news.apps.NewsConfig',
     'accounts.apps.AccountsConfig',
+    # =============================	
+    # 
+    # =============================
     'django_filters',
     'static',
     'signup',

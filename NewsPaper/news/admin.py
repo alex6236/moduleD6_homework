@@ -1,7 +1,10 @@
 from django.contrib import admin
 from .models import Post, Category  #, PostCategory
 
-# Register your models here.
+# from mail.models import Subscriber
+
+
+# admin.site.register(Subscriber)
 
 admin.site.register(Post)
 admin.site.register(Category)

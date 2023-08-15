@@ -1,7 +1,11 @@
 
-{% extends 'index.html' %}
+{% comment %} {% extends 'index.html' %} {% endcomment %}
+
+
 
 {% block content %}
+
+<h1>Подписан</h1>
 
 
 
@@ -10,11 +14,11 @@
         {% comment %} <form method="POST"> {% endcomment %}
         {% comment %} <form action="{% url 'subscribe_category' category.id %}" method="POST"> {% endcomment %}
         {% comment %} <form action="{% url '/subscribe/' category.id %}" method="POST"> {% endcomment %}
-        <form  method="POST">
+        {% comment %} <form  method="POST">
             {% csrf_token %}
             {{ form }}
             <button type="submit">Подписаться</button>
-        </form>
+        </form> {% endcomment %}
     {% comment %} {% endif %} {% endcomment %}
 {% comment %} {% endif %} {% endcomment %}
 {% comment %} <form method="post">

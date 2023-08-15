@@ -1,4 +1,8 @@
 {% extends 'index.html' %} 
+{% load custom_filters %}
+{% load categories_tags %}
+{% comment %} {% load subscribe_form_tags %} {% endcomment %}
+
  
 {% block title %}
     {{ category.name }}
@@ -6,11 +10,98 @@
  
 {% block content %}  
 
-hhhhhhhhhhhhhhhhhhhh
+
+<div class="header_top">
+    <h4>
+        {{ category_name|trans_category|upper}}
+    </h4>
+    <p>{{category_name}}</p>
+    Публикаций на странице: {{posts|length}}
+</div>
+
+{% if not is_subscriber %}
+    <a href = "{% url 'users:subscribe' %}" class="btn btn-primary" > Подписаться !</a>
+{% endif %}
+<p>{{category.name}}</p>
+
+{% comment %} <div class="">
+    {% subscribe_form1 %}
+</div> {% endcomment %}
+
+{% if posts %}
+{% for n in posts %}
+    {% if n.title == 'lorem' %}
+    <div class="header_news" onclick="location.href='{% url 'lorem_post' pk=n.pk %}'">
+        <h5 class="upper">{% lorem 4 w random %}</h5>
+        {{n.dataCreation|date:'M d Y'}}
+    </div>
+    <p class="author">Автор: {{ n.author }}</p>
+    {% else %}
+    <div class="header_news" onclick="location.href='{% url 'news_detail' pk=n.pk %}'">
+        <h5 class="upper">{{ n.title|censor }}</h5>
+        {{n.dataCreation|date:'M d Y'}}
+    </div>
+    <p class="author">Автор: {{ n.author }}</p>
+   
+    {% endif %}
+
+    <div class="text_news">
+    {% if n.title == 'lorem' %}
+        {% lorem 30 w random %}
+        <a href="{% url 'lorem_post' pk=n.pk %}">Подробнее &raquo;</a>
+    {% else %}
+        {{ n.text|truncatewords:25|censor }}
+        <a href="{% url 'news_detail' pk=n.pk %}">Подробнее &raquo;</a>
+    {% endif %}
+    </div>
+{% endfor %}
+{% else %}
+    <h3 style="margin: 20px 40px; font-family: Arial, Helvetica, sans-serif">
+        новостей нет
+    </h3>
+{% endif %}
+
+{% if is_paginated %}
+<div class="paginator">
+    <span class="arrow_links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">Первая</a>
+            <a class="a_arrow" href="?page={{ page_obj.previous_page_number }}">&#129144;</a>
+        {% else %}
+            <span class="page_end page_end_left">Первая &#129144</span>
+        {% endif %}
+    </span>
+    {% comment %} ======================= {% endcomment %}
+
+    {% comment %} {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <a class="num current_num">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a class="num" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %} {% endcomment %}
+
+    {% comment %} ========================== {% endcomment %}
+
+    <span class="current_page">
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    </span>
+    <span class="arrow_links">
+        {% if page_obj.has_next %}
+            <a class="a_arrow" href="?page={{ page_obj.next_page_number }}">&#129146;</a>
+            <a class="a_arrow" href="?page={{ page_obj.paginator.num_pages }}">Последняя</a>
+        {% else %}
+            <span class="page_end">&#129146; Последняя</span>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+{% endblock content %}
    {% comment %} <h1>
     {{ category.name }} <small class="font-italic text-muted"> Подписчиков {{ subscribers.count }} </small>
-   </h1>
-   {% if is_subscribed %}
+   </h1> {% endcomment %}
+   {% comment %} {% if is_subscribed %}
         <div>
             <em>
                 Отписаться от категории
@@ -31,10 +122,10 @@ hhhhhhhhhhhhhhhhhhhh
     {% endif %} {% endcomment %}
     {% comment %} {% load custom_filters %} {% endcomment %}
     {% comment %} {%  for post in category.post_set.all|sort_by:'-dateCreation' %} {% endcomment %}
-       <div class="row g-4 py-5 row-cols-1">
+       {% comment %} <div class="row g-4 py-5 row-cols-1"> {% endcomment %}
                 {% comment %} <div class="col d-flex align-items-start">            {% endcomment %}
                     {% comment %} <div> {% endcomment %}
-                        <h3 class="fs-2">{{ post.title }}</h3>
+                        {% comment %} <h3 class="fs-2">{{ post.title }}</h3> {% endcomment %}
                         {% comment %} <p>{{ post.dateCreation | date:'d.m.y' }} by {{ post.author }}</p>
                         <p>{{ post.text|slice:"100"|safe }}</p> {% endcomment %}
                         {% comment %} <a href="{% url 'news:post' post.id %}" class="btn btn-primary btn-sm">  {% endcomment %}
@@ -46,4 +137,4 @@ hhhhhhhhhhhhhhhhhhhh
 
     {% comment %} {% endfor %} {% endcomment %}
 
-{% endblock content %}
+{% comment %} {% endblock content %} {% endcomment %}

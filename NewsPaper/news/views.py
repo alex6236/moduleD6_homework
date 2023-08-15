@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
-from django.shortcuts import render, redirect
+from django.http import HttpResponse,HttpRequest
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator
 
-from .models import Post, Category
+from .models import Post
 from django_filters.views import FilterView
 from .filters import PostFilter
 from .forms import DateFilterForm, TitleFilterForm, TtextFilterForm, UsernameFilterForm, AddPostForm
@@ -11,6 +12,11 @@ from .forms import DateFilterForm, TitleFilterForm, TtextFilterForm, UsernameFil
 from django.db.models import Q
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
+# from users.models import Subscriber
+# from users.forms import SubscriberForm
+
+
 
 class NewsList(ListView):
     model = Post
@@ -128,56 +134,18 @@ class SearchHeader(FilterView):
     
 # ==================================
 
-class NewsCategoryView(ListView):
-    model = Category
-    template_name = 'categories.html'
-    context_object_name = 'categories'
-    queryset = Category.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        cat_dist = {
-            'sports': 'Спорт',
-            'politics': 'Политика',
-            'education': 'Образование',
-            'technology': 'Технологии',
-            'lorem': 'Рыба-текст',
-        }
-
-        categories = context['categories']
-        for category in categories:
-            category_name = category.name
-            if category_name in cat_dist:
-                category_name = cat_dist[category_name]
-            # else:
-            #     category_name = category_name
-            return context
-        # category_name = Category.objects.all()
-        # categori_rus_name = [value for key, value in cat_dist.items() if key == 'category_name', 'category_name'=value][0]
-        # context['categori_rus_name'] = categori_rus_name
-        # return context
-
-
-
 def posts_by_category(request, category_name):
-    
-    # translated_category = categories.get(category_name, 'Неизвестная категория')
-    # print(translated_category)
-    # posts = Post.objects.filter(postCategory=translated_category)
-    posts = Post.objects.filter(postCategory__name=category_name)
-    # posts = Post.objects.filter(category__name=category_name)
-    return render(request, 'category.html', {'posts': posts})
-    # return render(request, 'posts.html', {'posts': posts})
+    # category = get_object_or_404(Category, category_name=category_name)
+    # posts = Post.objects.filter(postCategory__name__iexact=category_name).order_by('-id')
+    posts = Post.objects.filter(postCategory__name=category_name).order_by('-id')
 
-# def CategoryDetailView(request, pk):
-#    category = Category.objects.get(name=pk)
-#    is_subscribed = True if len(category.subscribers.filter(id=request.user.id)) else False
+    context = {
+        'posts': posts,
+        'category_name': category_name,
+        'cat_selected': category_name,
+    }
 
-#    return render(request,'category.html', 
-#                  {'category': category,  
-#                   'is_subscribed' : is_subscribed, #,
-#                 #   'subscribers': category.subscribers.all()
-#                   'subscribers': category.subscribers.all()
-#                   })
+    # return render(request, 'category.html')
+    return render(request, 'category.html', context)
 
-    
+  

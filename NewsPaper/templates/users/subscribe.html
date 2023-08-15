@@ -1,0 +1,10 @@
+
+
+{% block sub_form %}
+    {% comment %} <form  method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Подписаться</button>
+    </form> {% endcomment %}
+    <h1>Категория: {{ category.name }}</h1>
+{% endblock sub_form %}

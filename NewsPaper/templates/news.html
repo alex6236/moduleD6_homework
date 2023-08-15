@@ -6,6 +6,8 @@
 {% endblock title %}
 
 {% block content %}
+{% comment %} {% include Hello, world! %} {% endcomment %}
+{% comment %} {% include 'categories.html' %} {% endcomment %}
     <div class="header_top">
         <h3>
         Лента новостей
@@ -13,6 +15,7 @@
         
         Публикаций на странице: {{news|length}}
     </div>
+    
     {% if news %}
     {% for n in news %}
         {% if n.title == 'lorem' %}

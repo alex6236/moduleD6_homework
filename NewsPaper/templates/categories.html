@@ -1,59 +1,12 @@
-{% comment %} {% extends 'index.html' %}  {% endcomment %}
-{% comment %} {% load static %} {% endcomment %}
+{% load categories_tags %}
+{% block cat %}
 
-{% load custom_filters %}
-
-{% block title %}
-    Категории
-{% endblock title %}
-
-{% block content %}
-    {% comment %} <div class="btn-toolbar justify-content-between border-bottom pb-2 mb-5">
-        <h1 class="post-title">Категории</h1>
-        <a href="{% url 'news:create_category' %}" class="btn btn-success d-flex align-items-center">
-            <svg class="ico text-white" width="24" height="24" fill="currentColor">
-                <use xlink:href="{% static 'img/bootstrap-icons.svg' %} #plus-lg"></use>
-            </svg>Добавить категорию</a>                 
-    </div> {% endcomment %}
-
-    <div class="card-deck mb-3 text-center">
-        {% for category in categories %}
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    {% comment %} <h5 class="card-title">{{ category.name }}</h5> {% endcomment %}
-                    <p class="card-text text-muted">Всего постов: {{ category.post_set.all.count }}</p>
-                    <a href = "{% url 'category' category.name %}" class="btn btn-primary stretched-link">{{ category.name}}</a>
-                </div>
-                </div>
+    <div class="categry_header">
+        {% for category in cats %}
+            <div class="category_menu">
+                <a href="{{ category.get_absolute_url }}" class="category_menu_link">{{ category.name|trans_category }}</a>
+            </div>
         {% endfor%}
     </div>
-
-     
-
-{% endblock content %} 
-{% comment %} {% block content %} 
-
-{% if sub %}
-<div>
-    <em>
-        Подписаться на категорию 
-        <strong> {{category}} ? </strong>
-    </em>
-    <button>
-        <a href = "{% url 'subscribe' category.id %}" > Подписаться!</a> 
-    </button>
-</div>
-{% else %}
-<div>
-    <em>
-        Отписаться от категории 
-        <strong> {{category}} ? </strong>
-    </em>
-    <button>
-        {% comment %} <a href = "{% url 'unsubscribe' pk=category.id %}" > Отписаться!</a> 
-    </button>
-</div>
-{% endif %}
-
-
-{% endblock content %} {% endcomment %}
+    
+{% endblock cat %} 

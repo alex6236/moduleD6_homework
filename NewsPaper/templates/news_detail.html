@@ -1,11 +1,15 @@
 {% extends 'index.html' %}
 {% load custom_filters %}
+{% comment %} {% load subscribe_tags %} {% endcomment %}
  
 {% block title %}
 {{ news_detail.title|censor }}
 {% endblock title %}
  
 {% block content %}
+{% comment %} {% subscribe_tag %} {% endcomment %}
+
+{% comment %} {% include 'mail/subscribe.html' %} {% endcomment %}
 
     {% comment %} {% if user.is_authenticated %}
         {% if category not in user.subscribed_categories.all %}
@@ -24,12 +28,6 @@
         <p class="text_news">{{ news_detail.text|censor }}</p>
     </div>
 
-    {{ postCategory }}
-
-    {% comment %} 
-    кнопки "удалить и редактировать" видны только авторизованному автору 
-    {% endcomment %}
-    
     {% if request.user.is_authenticated and news_detail.author|lower == request.user.username|lower %}
     <div class="block_link">
         <div class="edit_btn block_shadow">
