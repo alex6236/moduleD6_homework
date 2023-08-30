@@ -211,7 +211,7 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 
 EMAIL_HOST_USER = 'skillfactory.course'
-EMAIL_HOST_PASSWORD = 'ivyohdflikhjnbbi'
+EMAIL_HOST_PASSWORD = 'ivyohjnbbi'
 
 # DEFAULT_FROM_EMAIL = 'skillfactory.course@yandex.ru'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + '@yandex.ru'
