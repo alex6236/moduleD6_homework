@@ -7,3 +7,4 @@ Django_shell.md
 venv/
 NewsPaper/help.py
 NewsPaper/help.html
+NewsPaper/.env
