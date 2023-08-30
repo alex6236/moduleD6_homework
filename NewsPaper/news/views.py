@@ -58,7 +58,7 @@ class AddPost(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         return post_limit
     
     def form_valid(self, form):
-        if self.get_post_today() >= 33:
+        if self.get_post_today() >= 3:
            return redirect(reverse('post_limit'))
         else:
             self.object = form.save(commit=False)
