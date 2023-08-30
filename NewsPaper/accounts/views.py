@@ -13,7 +13,8 @@ class MailRegisterView(CreateView):
     model = User
     form_class = MailRegisterForm
     template_name = 'account/signup.html'
-    success_url = '/'
+    # success_url = '/'
+    success_url = '/account/login/'
     # success_url = '/users/profile/'
     # registration_url = '/accounts/signup/'
 
@@ -53,9 +54,6 @@ class PasswordChangeView(FormView):
     success_url = '/'
     # password_change_url = '/accounts/password/change/'
 
-# class SocialAccountLoginViev(TemplateView):
-#     template_name = 'account/login_social.html'
-    # login_social_url = '/accounts/socialaccount/login/'
-    # login_social_url = '/accounts/google/login/'
+
 
     

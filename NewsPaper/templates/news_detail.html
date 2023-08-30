@@ -7,18 +7,7 @@
 {% endblock title %}
  
 {% block content %}
-{% comment %} {% subscribe_tag %} {% endcomment %}
 
-{% comment %} {% include 'mail/subscribe.html' %} {% endcomment %}
-
-    {% comment %} {% if user.is_authenticated %}
-        {% if category not in user.subscribed_categories.all %}
-            <form action="{% url 'subscribe_category' category.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit">Подписаться</button>
-            </form>
-        {% endif %}
-    {% endif %} {% endcomment %}
 
     <div class="header_top">
         <h5 class="upper">{{ news_detail.title|censor }}</h5>

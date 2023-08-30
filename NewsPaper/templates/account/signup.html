@@ -16,10 +16,7 @@
 			<p>*Электронная почта:{{ form.email }}</p>
 			<p>*Пароль:{{ form.password1 }}</p>
 			<p>*Повторить пароль:{{ form.password2 }}</p>
-			{% comment %} {{ form.as_p }} {% endcomment %}
-			{% comment %} {% if redirect_field_value %}
-				<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-			{% endif %} {% endcomment %}
+			
 			<div class="d-grid gap-2">
 				<button class="btn btn-secondary" type="submit">Регистрация</button>
 			</div>

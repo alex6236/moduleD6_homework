@@ -12,7 +12,7 @@ class RegisterForm(UserCreationForm):
                 'class': 'form-control me-2',
                 }))
     
-    email = forms.CharField(label = "Имя", 
+    email = forms.CharField(label = "Email", 
                 widget=forms.EmailInput(attrs={
                 'type': 'email',
                 'placeholder': 'name@example.com',

@@ -1,13 +1,13 @@
-from django import forms
-# from django.contrib.auth.models import User
-from users.models import Subscriber
+# from django import forms
+# # from django.contrib.auth.models import User
+# from users.models import Subscriber
  
-class SubscriberForm(forms.ModelForm):
-    class Meta:
-        model = Subscriber
-        fields = ('sub_user', 'sub_email')
+# class SubscriberForm(forms.Form):
+#     class Meta:
+#         model = Subscriber
+#         fields = ('user', 'email', 'category')
 
-    #     print(forms)
+   
 
     # def clean(self):
     #     username = self.cleaned_data.get('username')

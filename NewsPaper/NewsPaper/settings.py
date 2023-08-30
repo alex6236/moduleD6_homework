@@ -31,8 +31,7 @@ DEBUG = True
 # Application definition
 
 INSTALLED_APPS = [
-    'allauth',
-    'allauth.account',
+    
     # =========================
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,11 +53,13 @@ INSTALLED_APPS = [
     'users',
     'mail',
     # =========== allauth ============
-    # 'allauth',
-    # 'allauth.account',
+    'allauth',
+    'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
+    # ===============================
+    'django_apscheduler',
     
 ]
 
@@ -74,6 +75,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # ====================================================
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    # request доступный в шаблонах
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
 
 ]
 
@@ -91,6 +94,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 # ====================================
+                'news.context_processors.add_request_to_context',
                 # 'django_filters.templatetags.django_filters',
             ],
         },
@@ -179,12 +183,11 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-# ACCOUNT_UNIQUE_EMAIL = False
+# ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-ALLOWED_HOSTS = [ '127.0.0.1',
-                 'localhost',
-             ]
+ALLOWED_HOSTS = [ '127.0.0.1',]
 
 ACCOUNT_FORMS = {
     'signup': 'accounts.forms.MailRegisterForm',
@@ -201,6 +204,8 @@ ACCOUNT_FORMS = {
                                 # включать его здесь обязательно
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
@@ -208,9 +213,21 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'skillfactory.course'
 EMAIL_HOST_PASSWORD = 'ivyohdflikhjnbbi'
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = 'skillfactory.course@yandex.ru'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + '@yandex.ru'
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
+
+    
+# ===================== django_apscheduler ==================
+
+# формат даты, которую будет воспринимать наш задачник(вспоминаем урок по фильтрам) 
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+ 
+# если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+# ===================================================================
 
 # ADMINS = [
 #     ('admin1', 'skillfactory.course@yandex.ru'),]
@@ -222,6 +239,6 @@ EMAIL_ADMIN = EMAIL_HOST_USER
 # 4. ACCOUNT_AUTHENTICATION_METHOD = 'username_email' - метод аутентификации, который позволяет пользователям входить в систему с помощью имени пользователя или адреса электронной почты. 
 # 5. ACCOUNT_SESSION_REMEMBER = False - отключение функции "запомнить меня" при входе в систему. 
 # 6. ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True - требование ввода пароля дважды при регистрации нового пользователя. 
-# 7. ACCOUNT_EMAIL_VERIFICATION = 'mandatory' - обязательное подтверждение адреса электронной почты при регистрации нового пользователя. 
+# 7. ACCOUNT_EMAIL_VERIFICATION = 'mandatory' #- обязательное подтверждение адреса электронной почты при регистрации нового пользователя. 
 # 8. ACCOUNT_CONFIRM_EMAIL_ON_GET = True - подтверждение адреса электронной почты при переходе по ссылке в электронном письме, отправленном пользователю.  
 #  Каждый из этих параметров определяет, каким образом пользователи могут входить в систему, какие данные требуются для регистрации нового пользователя и какие дополнительные шаги необходимо выполнить для подтверждения адреса электронной почты.

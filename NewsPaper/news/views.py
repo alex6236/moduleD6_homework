@@ -1,10 +1,8 @@
 from datetime import datetime, timezone
-from django.http import HttpResponse,HttpRequest
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator
-
-from .models import Post
+from .models import Post, Category
 from django_filters.views import FilterView
 from .filters import PostFilter
 from .forms import DateFilterForm, TitleFilterForm, TtextFilterForm, UsernameFilterForm, AddPostForm
@@ -12,9 +10,16 @@ from .forms import DateFilterForm, TitleFilterForm, TtextFilterForm, UsernameFil
 from django.db.models import Q
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+# =======================================
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+# ======================================
+from django.utils import timezone
+from django.urls import reverse
 
-# from users.models import Subscriber
-# from users.forms import SubscriberForm
+
 
 
 
@@ -46,15 +51,25 @@ class AddPost(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         context['form'] = AddPostForm() 
         return context
     
+    def get_post_today(self):
+        today = datetime.now().date()
+        post_limit = Post.objects.filter(author=self.request.user.author,  # type: ignore
+                                         dataCreation__date=today).count()
+        return post_limit
+    
     def form_valid(self, form):
-        # user = self.request.user
-        # form.instance.author = self.request.user.author
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user.author
-        self.object.save()
-        category = form.cleaned_data['category']
-        self.object.postCategory.add(category) 
-        return super().form_valid(form)
+        if self.get_post_today() >= 33:
+           return redirect(reverse('post_limit'))
+        else:
+            self.object = form.save(commit=False)
+            self.object.author = self.request.user.author # type: ignore
+            self.object.save()
+            category = form.cleaned_data['category']
+            self.object.postCategory.add(category) 
+            return super().form_valid(form)
+    
+def post_limit(request):
+    return render(request, 'post_limit.html')
 
     
 class PostUpdate(PermissionRequiredMixin, UpdateView):
@@ -65,8 +80,6 @@ class PostUpdate(PermissionRequiredMixin, UpdateView):
     success_url = '/news/'
 
     def form_valid(self, form):
-        # user = self.request.user
-        # form.instance.author = self.request.user.author
         self.object = form.save(commit=False)
         self.object.save()
         category = form.cleaned_data['category']
@@ -134,18 +147,54 @@ class SearchHeader(FilterView):
     
 # ==================================
 
-def posts_by_category(request, category_name):
-    # category = get_object_or_404(Category, category_name=category_name)
-    # posts = Post.objects.filter(postCategory__name__iexact=category_name).order_by('-id')
-    posts = Post.objects.filter(postCategory__name=category_name).order_by('-id')
-
-    context = {
+class CategoryNewsView(ListView):
+    model = Post
+    # form_class = SubscriberForm
+    template_name = 'category.html'
+    paginate_by = 10
+    
+    def get(self, request, category_id):
+        user = request.user
+        category = Category.objects.get(id=category_id)
+        posts = category.post_set.all().order_by('-id') # type: ignore
+        is_subscribed = category.subscribers.filter(id=user.id).exists()
+        context = {
+        'category': category,
         'posts': posts,
-        'category_name': category_name,
-        'cat_selected': category_name,
-    }
+        'is_subscribed': is_subscribed,
+        }
+        return render(request, 'category.html', context)
+    
+@login_required
+def subscribe_category(request, category_id):
+    user = request.user
+    # print(user, user.id)
+    category = Category.objects.get(id=category_id)
+    # print(category)
+    if not category.subscribers.filter(id=user.id).exists():
+        email = user.email
+        # print(email)
+        category.subscribers.add(user)
+        html = render_to_string('mail/subscribed.html',
+            {'category': category, 'user': user,},)
+        msg = EmailMultiAlternatives(
+            subject=f'Подписка на новости',
+            body='',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[email, ],
+        )
+        msg.attach_alternative(html, 'text/html')
+        msg.send()
+        return redirect(category.get_absolute_url())
+    return redirect(category.get_absolute_url())
 
-    # return render(request, 'category.html')
-    return render(request, 'category.html', context)
+@login_required
+def unsubscribe_category(request, category_id):
+    user = request.user
+    category = Category.objects.get(id=category_id)
+    if category.subscribers.filter(id=user.id).exists():
+        category.subscribers.remove(user)
+    return redirect(category.get_absolute_url()) 
+
 
   

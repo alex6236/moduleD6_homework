@@ -81,6 +81,16 @@ class AddPostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'category', 'text']
+        
+        
+class SubscriberForm(forms.Form):
+    user = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    category = forms.CharField(max_length=100)
+    
+    # class Meta:
+    #     # model = Subscriber
+    #     fields = ('user', 'email', 'category')
 
 
        
